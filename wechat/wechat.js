@@ -48,9 +48,13 @@ WeChat.prototype.updateAccessToken = async function () {
   }
 }
 
-Wechat.prototype.reply=function () {
-  var content="";
-  var message=this.receiveMessage;
+WeChat.prototype.reply=function () {
+	var ctx=this;
+	//回复的内容
+  var content=ctx.replyContent;
+  //接收微信消息（有普通消息和事件消息两种类型）
+  var message=ctx.receiveMessage;
+  console.log(message);
   var xml=reply.getReplyMeaageTemplate(content,message);
   ctx.status=200;
   ctx.type="application/xml";

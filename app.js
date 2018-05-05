@@ -8,13 +8,14 @@ const logger = require('koa-logger')
 const wechat=require("./wechat");
 const config=require("./config");
 const index = require('./controller/index')
-const users = require('./routes/users')
+const users = require('./routes/users');
+const weixin=require("./weixin");
 
 
 onerror(app)
 app.use(logger())
-app.use(wechat(config.wechat));
-// middlewares
+app.use(wechat(config.wechat,weixin.reply));
+
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
 }))
@@ -26,7 +27,6 @@ app.use(views(__dirname + '/views', {
   extension: 'pug'
 }))
 
-// logger
 app.use(async (ctx, next) => {
   const start = new Date()
   await next()

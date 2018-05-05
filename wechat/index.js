@@ -4,7 +4,7 @@ var getRawBody=require("raw-body");
 var WeChat = require("./wechat");
 var tool=require("../lib/tool");
 
-module.exports = function (options) {
+module.exports = function (options,handler) {
   var wechat = new WeChat(options);
   return async function (ctx, next) {
     //接入
@@ -32,7 +32,10 @@ module.exports = function (options) {
         var xmlObject=await tool.parseXmlToObject(text)
         var message=tool.formatMessage(xmlObject.xml);
         ctx.receiveMessage=message;
-        reply.call(ctx);
+        //改变执行上下文
+        await handler.call(ctx,next);
+        //回复消息
+        wechat.reply.call(ctx);
       }
       else {
         ctx.body = "只接受来自微信的请求!";
