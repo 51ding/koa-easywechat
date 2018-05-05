@@ -1,0 +1,34 @@
+{
+  "name": "wechatstudy",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node bin/www",
+    "dev": "./node_modules/.bin/nodemon bin/www",
+    "prd": "pm2 start bin/www",
+    "test": "node ./test/index"
+  },
+  "dependencies": {
+    "debug": "^2.6.3",
+    "glob": "^7.1.2",
+    "koa": "^2.2.0",
+    "koa-bodyparser": "^3.2.0",
+    "koa-convert": "^1.2.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^2.0.1",
+    "koa-onerror": "^1.2.1",
+    "koa-router": "^7.1.1",
+    "koa-static": "^3.0.0",
+    "koa-views": "^5.2.1",
+    "mongoose": "^5.0.17",
+    "pug": "^2.0.0-rc.1",
+    "raw-body": "^2.3.2",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2",
+    "sha1": "^1.1.1",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "nodemon": "^1.8.1"
+  }
+}
