@@ -144,6 +144,7 @@ WeChat.prototype.reply = function () {
   //接收微信消息（有普通消息和事件消息两种类型）
   var message = ctx.message;
   var xml = reply.getReplyMeaageTemplate(content, message);
+  console.log(xml);
   ctx.status = 200;
   ctx.type = "application/xml";
   ctx.body = xml;

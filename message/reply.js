@@ -7,16 +7,16 @@ exports.getReplyMeaageTemplate=function(replyContent,receiveMessage) {
 	}
 	//回复图片消息
 	else if(info.msgType=="image"){
-		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Image><MediaId><![CDATA[${info.content.media_id}]]></MediaId></Image></xml>`;
+		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Image><MediaId><![CDATA[${info.content.mediaid}]]></MediaId></Image></xml>`;
 	}
 	else if(info.msgType=="voice"){
-		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Voice><MediaId><![CDATA[${info.content.media_id}]]></MediaId></Voice></xml>`;
+		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Voice><MediaId><![CDATA[${info.content.mediaid}]]></MediaId></Voice></xml>`;
 	}
 	else if(info.msgType=="video"){
-		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Video><MediaId><![CDATA[${info.content.media_id}]]></MediaId><Title><![CDATA[${info.content.title}]]></Title><Description><![CDATA[${info.content.description}]]></Description></Video></xml>`;
+		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Video><MediaId><![CDATA[${info.content.mediaid}]]></MediaId><Title><![CDATA[${info.content.title}]]></Title><Description><![CDATA[${info.content.description}]]></Description></Video></xml>`;
 	}
 	else if(info.msgType=="music"){
-		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Music><Title><![CDATA[${info.content.Title}]]></Title><Description><![CDATA[${info.content.Description}]]></Description><MusicUrl><![CDATA[${info.content.MUSIC_Url}]]></MusicUrl><HQMusicUrl><![CDATA[${info.content.HQ_MUSIC_Url}]]></HQMusicUrl><ThumbMediaId><![CDATA[${info.content.ThumbMediaId}]]></ThumbMediaId></Music></xml>`;
+		xml=`<xml><ToUserName><![CDATA[${info.ToUserName}]]></ToUserName><FromUserName><![CDATA[${info.FromUserName}]]></FromUserName><CreateTime>${info.CreateTime}</CreateTime><MsgType><![CDATA[${info.msgType}]]></MsgType><Music><Title><![CDATA[${info.content.title}]]></Title><Description><![CDATA[${info.content.description}]]></Description><MusicUrl><![CDATA[${info.content.MUSIC_Url}]]></MusicUrl><HQMusicUrl><![CDATA[${info.content.HQ_MUSIC_Url}]]></HQMusicUrl><ThumbMediaId><![CDATA[${info.content.ThumbMediaId}]]></ThumbMediaId></Music></xml>`;
 	}
 	else if(info.msgType=="news"){
 		var artical="";
