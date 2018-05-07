@@ -2,36 +2,47 @@
 var fs=require("fs");
 var path=require("path");
 exports.reply=async function(next){
-	var receiveMessage=this.receiveMessage;
+	var receiveMessage=this.message;
 	var wechat=this.wechat;
   if(receiveMessage.MsgType=="text"){
 
     if(receiveMessage.Content==1){
-      this.replyContent={
+      this.reply={
         type:"text",
         content:"新的写法"
       }
     }
     else if(receiveMessage.Content==2){
-      this.replyContent="我是2";
+      this.reply={
+        type:"text",
+        content:"这也是新的写法！"
+      };
     }
     else if(receiveMessage.Content==3){
-      this.replyContent=[{
-        title:"我是王大锤",
-        description:"这是描述",
-        picurl:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526194643&di=ec73dcd5cb6a12e1d38984c612edaaae&imgtype=jpg&er=1&src=http%3A%2F%2Fpic34.photophoto.cn%2F20150313%2F0005018304394138_b.jpg",
-        url:"https://cnodejs.org/"
-      }]
+      this.reply={
+        type:"news",
+        content:[
+          {
+            title:"我是王大锤",
+            description:"这是描述",
+            picurl:"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526194643&di=ec73dcd5cb6a12e1d38984c612edaaae&imgtype=jpg&er=1&src=http%3A%2F%2Fpic34.photophoto.cn%2F20150313%2F0005018304394138_b.jpg",
+            url:"https://cnodejs.org/"
+          }
+        ]
+      }
     }
     else if(receiveMessage.Content==4){
       var type="image";
       var data=await wechat.uploadTemporaryMaterial(type,path.join(__dirname,"./public/images/1.jpg"));
       console.log(data);
-      this.replyContent="上传图片成功！";
+      this.reply={
+        type:"text",
+        content:"上传图片成功！"
+      };
     }
     else if(receiveMessage.Content==5){
       var mediaId='_CDwFnJm3_TauWDSkmm2Jmb4f_3mpgonMzEvacdVGqZ2_sUPHwCAesPmDdhQ4Nfl';
-      this.replyContent={
+      this.reply={
         type:"image",
         content:{
           media_id:mediaId
@@ -42,17 +53,17 @@ exports.reply=async function(next){
       var type="video";
       var data=await wechat.uploadTemporaryMaterial(type,path.join(__dirname,"./public/images/1.mp4"));
       console.log(data);
-      this.replyContent="dadsadsadsa";
+      this.reply="dadsadsadsa";
     }
     else if(receiveMessage.Content==7){
       var mediaId='y72canGSdS3GI4_LI3zlDPfrr6ymNDs0wvwTOJNWlNcT5TI9NfYDouqjQBbsIbTV';
-      this.replyContent={
+      this.reply={
         type:"video",
         media_id:mediaId
       }
     }
     else if(receiveMessage.Content==8){
-      this.replyContent={
+      this.reply={
         type:"music",
         Title:"好听",
         Description:"一首歌",
@@ -62,20 +73,20 @@ exports.reply=async function(next){
     }
     else if(receiveMessage.Content==9){
       var jsTicket=await wechat.getJsApiTicket();
-      this.replyContent={
+      this.reply={
         type:"text",
         content:jsTicket
       }
     }
     else if(receiveMessage.Content==10){
       var token=await wechat.getAccessToken();
-      this.replyContent={
+      this.reply={
         type:"text",
         content:token
       }
     }
     else{
-      this.replyContent="你说什么我听不懂！";
+      this.reply="你说什么我听不懂！";
     }
   }
 }

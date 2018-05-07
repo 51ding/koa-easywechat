@@ -1,20 +1,29 @@
 const Koa = require('koa')
-const app = new Koa()
+const app = new Koa();
 const views = require('koa-views')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const wechat=require("./wechat");
-const config=require("./config");
-const index = require('./controller/index')
-const users = require('./routes/users');
 const weixin=require("./weixin");
 
 
 onerror(app)
 app.use(logger())
-app.use(wechat(config.wechat,weixin.reply));
+app.use(wechat({
+  appID:"wx2ea795e409b2c674",
+  appsecret:"e4632492abb3de0943fc7ca20c4b27d0",
+  token:"houhanbin"
+},function () {
+  var message=this.message;
+  if(message.MsgType=="text"){
+    this.reply={
+      type:"text",
+      content:"dasdasdas"
+    }
+  }
+}));
 
 app.use(bodyparser({
   enableTypes:['json', 'form', 'text']
@@ -34,11 +43,7 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
-// routes
-app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
 
-// error-handling
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
 });

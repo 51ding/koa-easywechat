@@ -1,27 +1,70 @@
-var request=require("request");
-var rp=require("request-promise");
-var api=require("./api");
-var reply=require("../message/reply");
-var fs=require("fs");
+var request = require("request");
+var rp = require("request-promise");
+var api = require("./api");
+var reply = require("../message/reply");
+var fs = require("fs");
+var sha1 = require("sha1");
+var util = require("util");
+var getRawBody = require("raw-body");
+var tool = require("../lib/tool");
+
 function WeChat(options) {
   this.appID = options.appID;
   this.appsecret = options.appsecret;
-  this.accessToken;
-  this.expiresIn;
-  this.jsApiTicket;
-  this.jsApiTicketExpiresIn;
+  this.token=options.token;
+  this.accessToken=null;
+  this.expiresIn=null;
+  this.jsApiTicket=null;
+  this.jsApiTicketExpiresIn=null;
 }
 
+
+/**
+ * 功能：验证消息的确来自微信服务器
+ */
+WeChat.prototype.isMessageFromWeChat = async function (handler,next) {
+  var ctx = this;
+  var wechat=ctx.wechat;
+  var {signature, timestamp, nonce, echostr} = ctx.query;
+  var token = wechat.token;
+  var encryption = sha1([token, timestamp, nonce].sort().join(""));
+  if (encryption === signature) {
+    if (ctx.method == "GET") {
+      ctx.body = echostr;
+    }
+    if (ctx.method == "GET") {
+      ctx.body = echostr;
+    }
+    else if (ctx.method == "POST") {
+      var text = await getRawBody(ctx.req, {
+        length: ctx.length,
+        limit: "1mb",
+        encoding: "utf8"
+      })
+      var xmlObject = await tool.parseXmlToObject(text);
+      var message = tool.formatMessage(xmlObject.xml);
+      ctx.message = message;
+      await handler.call(ctx, next);
+      wechat.reply.call(ctx);
+    }
+    else{
+        await next();
+    }
+  }
+  else {
+    await next();
+  }
+}
 /**
  * 功能：获取access_Token
  */
-WeChat.prototype.getAccessToken =async function () {
-  if(!this.isValidateAccessToken()){
+WeChat.prototype.getAccessToken = async function () {
+  if (!this.isValidateAccessToken()) {
 
-    var token=await this.updateAccessToken();
+    var token = await this.updateAccessToken();
     return token;
   }
-  else{
+  else {
     return this.accessToken;
   }
 }
@@ -29,13 +72,13 @@ WeChat.prototype.getAccessToken =async function () {
 /**
  * 功能：获取jsapi_ticket,用于微信网页开发
  */
-WeChat.prototype.getJsApiTicket =async function () {
-  if(!this.isValidateJsApiTicket()){
+WeChat.prototype.getJsApiTicket = async function () {
+  if (!this.isValidateJsApiTicket()) {
     console.log("第一次");
-    var token=await this.updateJsApiTicket();
+    var token = await this.updateJsApiTicket();
     return token;
   }
-  else{
+  else {
     console.log("其他");
     return this.jsApiTicket;
   }
@@ -45,7 +88,7 @@ WeChat.prototype.getJsApiTicket =async function () {
 /**
  * 功能：判断是否是合法的access_Token
  */
-WeChat.prototype.isValidateAccessToken =function () {
+WeChat.prototype.isValidateAccessToken = function () {
   if (!this.accessToken || !this.expiresIn) return false;
   return this.expiresIn > Date.now();
 }
@@ -53,7 +96,7 @@ WeChat.prototype.isValidateAccessToken =function () {
 /**
  * 功能：判断是否是合法的jsApiTicket
  */
-WeChat.prototype.isValidateJsApiTicket =function () {
+WeChat.prototype.isValidateJsApiTicket = function () {
   if (!this.jsApiTicket || !this.jsApiTicketExpiresIn) return false;
   return this.jsApiTicketExpiresIn > Date.now();
 }
@@ -62,15 +105,15 @@ WeChat.prototype.isValidateJsApiTicket =function () {
  * 功能：如果access_token不合法或者过期则向微信服务器发送请求，更新accsee_Token
  */
 WeChat.prototype.updateAccessToken = async function () {
-  var url=api.accseeToken+`&appid=${this.appID}&secret=${this.appsecret}`;
-  try{
-    var result=await rp(url);
-    var data=JSON.parse(result);
-    this.accessToken=data.access_token;
-    this.expiresIn=Date.now()+(data.expires_in-20)*1000;
+  var url = api.accseeToken + `&appid=${this.appID}&secret=${this.appsecret}`;
+  try {
+    var result = await rp(url);
+    var data = JSON.parse(result);
+    this.accessToken = data.access_token;
+    this.expiresIn = Date.now() + (data.expires_in - 20) * 1000;
     return this.accessToken;
   }
-  catch(err){
+  catch (err) {
     throw err;
   }
 }
@@ -79,31 +122,31 @@ WeChat.prototype.updateAccessToken = async function () {
  * 功能：更新jsApiTikcet
  */
 WeChat.prototype.updateJsApiTicket = async function () {
-  var accessToken=await this.getAccessToken();
-  var url=api.jsApiTicket+`access_token=${accessToken}&type=jsapi`;
-  try{
-    var result=await rp(url);
-    var data=JSON.parse(result);
-    this.jsApiTicket=data.ticket;
-    this.jsApiTicketExpiresIn=Date.now()+(data.expires_in-20)*1000;
+  var accessToken = await this.getAccessToken();
+  var url = api.jsApiTicket + `access_token=${accessToken}&type=jsapi`;
+  try {
+    var result = await rp(url);
+    var data = JSON.parse(result);
+    this.jsApiTicket = data.ticket;
+    this.jsApiTicketExpiresIn = Date.now() + (data.expires_in - 20) * 1000;
     return this.jsApiTicket;
   }
-  catch(err){
+  catch (err) {
     throw err;
   }
 }
 
 
-WeChat.prototype.reply=function () {
-	var ctx=this;
-	//回复的内容
-  var content=ctx.replyContent;
+WeChat.prototype.reply = function () {
+  var ctx = this;
+  //回复的内容
+  var content = ctx.reply;
   //接收微信消息（有普通消息和事件消息两种类型）
-  var message=ctx.receiveMessage;
-  var xml=reply.getReplyMeaageTemplate(content,message);
-  ctx.status=200;
-  ctx.type="application/xml";
-  ctx.body=xml;
+  var message = ctx.message;
+  var xml = reply.getReplyMeaageTemplate(content, message);
+  ctx.status = 200;
+  ctx.type = "application/xml";
+  ctx.body = xml;
 }
 
 /**
@@ -111,26 +154,26 @@ WeChat.prototype.reply=function () {
  * @param [String] type 媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb，主要用于视频与音乐格式的缩略图）
  * @param [Stream] stream 一个可读的文件流，例如fs.createReadStream(filePath)
  */
-WeChat.prototype.uploadTemporaryMaterial=async function(type,filePath){
-  var supportType=["image","voice","video","thumb"];
-  if(!supportType.includes(type)) throw new Error(`无效的素材类型，仅支持${supportType.join(",")}`);
-  var accessToken=await this.getAccessToken();
-  var url=api.material.uploadTemporaryMaterial+`access_token=${accessToken}&type=${type}`
-  var options={
-    method:"POST",
-    uri:url,
-    formData:{
-      media:fs.createReadStream(filePath)
+WeChat.prototype.uploadTemporaryMaterial = async function (type, filePath) {
+  var supportType = ["image", "voice", "video", "thumb"];
+  if (!supportType.includes(type)) throw new Error(`无效的素材类型，仅支持${supportType.join(",")}`);
+  var accessToken = await this.getAccessToken();
+  var url = api.material.uploadTemporaryMaterial + `access_token=${accessToken}&type=${type}`
+  var options = {
+    method: "POST",
+    uri: url,
+    formData: {
+      media: fs.createReadStream(filePath)
     }
   }
-  try{
-    var response=await rp(options);
+  try {
+    var response = await rp(options);
     return response;
   }
-  catch(err){
+  catch (err) {
     throw err;
   }
 
 }
 
-module.exports=WeChat;
+module.exports = WeChat;
