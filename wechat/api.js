@@ -21,6 +21,11 @@ module.exports={
   //账号管理
   account:{
 
+  },
+  menu:{
+  	createMenu:prefix+"menu/create?",
+  	getMenu:prefix+"menu/get?",
+  	deleteMenu:prefix+"menu/delete?"
   }
 
 }

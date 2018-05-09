@@ -79,6 +79,58 @@ app.use(wechat({
         }]
       }
     }
+    //生成菜单
+    else if(message.Content==7){
+     	var menu={
+     button:[
+     {    
+          type:"click",
+          name:"今日歌曲",
+          key:"V1001_TODAY_MUSIC"
+      },
+      {
+           name:"菜单",
+           sub_button:[
+           {    
+               type:"view",
+               name:"搜索",
+               url:"http://www.soso.com/"
+           },
+            {
+               type:"click",
+               name:"赞一下我们",
+               key:"V1001_GOOD"
+            }]
+       }]
+ }
+     	var msg="菜单生成成功！";
+     	try{
+     		await wechat.createMenu(menu);
+     	}
+     	catch(err){
+     		msg=err.message;
+     	}
+     	this.reply={
+     		type:"text",
+     		content:msg
+     	}
+    }
+    //获取菜单
+    else if(message.Content==8){
+    	var menu=await wechat.getMenu();
+    	this.reply={
+        type:"text",
+        content:menu
+      }
+    }
+    //删除菜单
+    else if(message.Content==9){
+    	var menu=await wechat.deleteMenu();
+    	this.reply={
+        type:"text",
+        content:"删除成功！"
+      }
+    }
     else{
       var token=await wechat.getAccessToken();
       this.reply={

@@ -177,4 +177,54 @@ WeChat.prototype.uploadTemporaryMaterial = async function (type, filePath) {
 
 }
 
+/**
+ * 功能：创建自定义菜单
+ * @param [String] menuObject 菜单对象，对象的格式请参照微信开发文档，格式不对会抛出异常
+ */
+WeChat.prototype.createMenu=async function(menuObject){
+	var accessToken = await this.getAccessToken();
+	var url=api.menu.createMenu+`access_token=${accessToken}`;
+	var options = {
+    method: "POST",
+    uri: url,
+    body: menuObject,
+    json:true
+  }
+	var response=await rp(options);
+	if(response.errcode!=0){
+		throw new Error(`errcode:${response.errcode},errmsg:${response.errmsg}`);
+	}
+}
+
+
+
+/**
+ * 功能：自定义菜单查询
+ * @param [String] menuObject 菜单对象
+ * 返回值：菜单的自定菜单的json数据
+ */
+WeChat.prototype.getMenu=async function(){
+	var accessToken = await this.getAccessToken();
+	var url=api.menu.getMenu+`access_token=${accessToken}`;
+
+	var response=await rp(url);
+	return response;
+}
+
+
+/**
+ * 功能：删除自定义菜单
+ */
+WeChat.prototype.deleteMenu=async function(){
+	var accessToken = await this.getAccessToken();
+	var url=api.menu.deleteMenu+`access_token=${accessToken}`;
+
+	var response=await rp(url);
+
+	if(JSON.parse(response).errcode!=0){
+		throw new Error(`errcode:${response.errcode},errmsg:${response.errmsg}`);
+	}
+}
+
+
 module.exports = WeChat;
