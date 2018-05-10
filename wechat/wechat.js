@@ -21,11 +21,14 @@ function WeChat(options) {
   this.jsApiTicket = null;
   this.jsApiTicketExpiresIn = null;
   this.initValidate();
-  this.wxcpt = new WXBizMsgCrypt({
-    sToken: this.token,
-    sCorpID: this.appID,
-    sEncodingAESKey:this.encodingAESKey
-  });
+  if (this.isSafeModel == true) {
+    this.wxcpt = new WXBizMsgCrypt({
+      sToken: this.token,
+      sCorpID: this.appID,
+      sEncodingAESKey: this.encodingAESKey
+    });
+  }
+
 }
 
 
@@ -39,8 +42,7 @@ WeChat.prototype.initValidate = function () {
 WeChat.prototype.isMessageFromWeChat = async function (handler, next) {
   var ctx = this;
   var wechat = ctx.wechat;
-  var {signature, timestamp, nonce, echostr,encrypt_type,msg_signature} = ctx.query;
-  wechat.validateWechatRequest(encrypt_type,msg_signature);
+  var {signature, timestamp, nonce, echostr, encrypt_type, msg_signature} = ctx.query;
   var token = wechat.token;
   var encryption = sha1([token, timestamp, nonce].sort().join(""));
   if (encryption === signature) {
@@ -49,6 +51,7 @@ WeChat.prototype.isMessageFromWeChat = async function (handler, next) {
       ctx.body = echostr;
     }
     else if (ctx.method == "POST") {
+      wechat.validateWechatRequest(encrypt_type, msg_signature);
       var text = await getRawBody(ctx.req, {
         length: ctx.length,
         limit: "1mb",
@@ -57,16 +60,16 @@ WeChat.prototype.isMessageFromWeChat = async function (handler, next) {
       var message;
       //安全模式下，对消息进行加解密
       if (wechat.isSafeModel == true) {
-        var result =await  wechat.decryptionMessage(msg_signature,timestamp,nonce,text);
+        var result = await  wechat.decryptionMessage(msg_signature, timestamp, nonce, text);
         message = tool.formatMessage(result.sMsg);
       }
-      else{
+      else {
         var xmlObject = await tool.parseXmlToObject(text);
         message = tool.formatMessage(xmlObject.xml);
       }
       ctx.message = message;
       await handler.call(ctx, next);
-      wechat.reply.call(ctx,timestamp,nonce);
+      wechat.reply.call(ctx, timestamp, nonce);
     }
     else {
       await next();
@@ -78,11 +81,11 @@ WeChat.prototype.isMessageFromWeChat = async function (handler, next) {
 }
 
 
-WeChat.prototype.validateWechatRequest=function (encrypt_type,msg_signature) {
-  if(this.isSafeModel==true && !encrypt_type && !msg_signature){
-      throw new Error("当前正处于明文模式,config.isSafeModel应该配置为false");
+WeChat.prototype.validateWechatRequest = function (encrypt_type, msg_signature) {
+  if (this.isSafeModel == true && !encrypt_type && !msg_signature) {
+    throw new Error("当前正处于明文模式,config.isSafeModel应该配置为false");
   }
-  if(!this.isSafeModel && encrypt_type && msg_signature){
+  if (!this.isSafeModel && encrypt_type && msg_signature) {
     throw new Error("当前正处于安全模式,config.isSafeModel应该配置为true");
   }
 }
@@ -90,8 +93,8 @@ WeChat.prototype.validateWechatRequest=function (encrypt_type,msg_signature) {
 /**
  * 功能：在开启安全时候，需要对微信发送过来的消息进行解密
  */
-WeChat.prototype.decryptionMessage = async function (signature,timestamp,nonce,text) {
-  var result=await this.wxcpt.DecryptMsg(signature,timestamp,nonce,text);
+WeChat.prototype.decryptionMessage = async function (signature, timestamp, nonce, text) {
+  var result = await this.wxcpt.DecryptMsg(signature, timestamp, nonce, text);
   return result;
 }
 
@@ -175,15 +178,15 @@ WeChat.prototype.updateJsApiTicket = async function () {
 }
 
 
-WeChat.prototype.reply = function (timestamp,nonce) {
+WeChat.prototype.reply = function (timestamp, nonce) {
   var ctx = this;
   //回复的内容
   var content = ctx.reply;
   //接收微信消息（有普通消息和事件消息两种类型）
   var message = ctx.message;
-  var xml=reply.getReplyMeaageTemplate(content, message);
-  if(this.wechat.isSafeModel==true){
-    xml=this.wechat.wxcpt.EncryptMsg(xml,timestamp,nonce).sEncryptMsg
+  var xml = reply.getReplyMeaageTemplate(content, message);
+  if (this.wechat.isSafeModel == true) {
+    xml = this.wechat.wxcpt.EncryptMsg(xml, timestamp, nonce).sEncryptMsg
   }
 
   ctx.status = 200;

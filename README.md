@@ -23,7 +23,9 @@ var app=new Koa();
 app.use(WeChat({
   appID:"",
   appsecret:"",
-  token:""
+  token:"",
+  isSafeModel:false,
+  encodingAESKey:""
 },async function (next){
   this.reply={
       type:"text",
@@ -40,13 +42,13 @@ app.listen(3000,()=>{
 
 #### WeChat(config , replyHandler);
 
-##### config
+##### config【Object】
 
-- appID :第三方用户唯一凭证
-- appsecret:第三方用户唯一凭证密钥
-- token:令牌用于验证，用于验证请求是否来自微信服务器
-
-以上三个参数缺一不可，注意属性的大小写，不要写错了
+- appID【String】 : 第三方用户唯一凭证
+- appsecret【String】: 第三方用户唯一凭证密钥
+- token【String】: 令牌用于验证，用于验证请求是否来自微信服务器
+- isSafeModel【Boolean】: 消息加解密方式,值为true时，使用安全模式，值为false时，使用明文模式，当不配置的时候，默认值为false
+- encodingAESKey【string】:消息加解密密钥，当config.isSafeModel=true时，必须配置encodingAESKey
 
 ##### replyHandler:是一个async函数,用于开发者自己实现自己的自动回复业务逻辑
 

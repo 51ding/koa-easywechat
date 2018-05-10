@@ -14,7 +14,7 @@ app.use(wechat({
   appID: "",
   appsecret: "",
   token: "",
-  isSafeModel:true,
+  isSafeModel:false,
   encodingAESKey:""
 }, async function () {
   var message = this.message;

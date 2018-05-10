@@ -27,9 +27,9 @@ var fs=require("fs");
 // })
 
 var wxcpt = new WXBizMsgCrypt({
-  sToken: "houhanbin",
-  sCorpID: "wx914e18b87ddbc384",
-  sEncodingAESKey: "jo2MhVyQIe2E19rBBwdBMJPI3SsQwXmY82iW2ToOmuG"
+  sToken: "",
+  sCorpID: "",
+  sEncodingAESKey: ""
 });
 var sReqMsgSig = "bc2a59c0fd5796c4eb1e4cf5dd98096e87a8786c";
 var sReqTimeStamp = "1525938898";
