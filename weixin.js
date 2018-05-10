@@ -34,7 +34,6 @@ exports.reply=async function(next){
     else if(receiveMessage.Content==4){
       var type="image";
       var data=await wechat.uploadTemporaryMaterial(type,path.join(__dirname,"./public/images/1.jpg"));
-      console.log(data);
       this.reply={
         type:"text",
         content:"上传图片成功！"
@@ -52,7 +51,6 @@ exports.reply=async function(next){
     else if(receiveMessage.Content==6){
       var type="video";
       var data=await wechat.uploadTemporaryMaterial(type,path.join(__dirname,"./public/images/1.mp4"));
-      console.log(data);
       this.reply="dadsadsadsa";
     }
     else if(receiveMessage.Content==7){

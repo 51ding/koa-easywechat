@@ -2,7 +2,7 @@
   "name": "koa-easywechat",
   "version": "0.1.4",
   "scripts": {
-    "test": "node ./test/index"
+    "test": "node ./test/MsgCrypt"
   },
   "dependencies": {
     "raw-body": "^2.3.2",

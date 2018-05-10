@@ -171,20 +171,12 @@ var menu=await wechat.getMenu();
 
 #### wechat.deleteMenu()
 
+功能：删除自定义菜单
+
 ```javascript
 var wechat=ctx.wechat;
 var menu=await wechat.deleteMenu();
 ```
-
-
-
-功能：删除自定义菜单
-
-
-
-
-
-
 
 
 

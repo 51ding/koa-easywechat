@@ -7,31 +7,44 @@ var sha1 = require("sha1");
 var util = require("util");
 var getRawBody = require("raw-body");
 var tool = require("../lib/tool");
+var WXBizMsgCrypt = require("../lib/WXBizMsgCrypt.js");
+
 
 function WeChat(options) {
   this.appID = options.appID;
   this.appsecret = options.appsecret;
-  this.token=options.token;
-  this.accessToken=null;
-  this.expiresIn=null;
-  this.jsApiTicket=null;
-  this.jsApiTicketExpiresIn=null;
+  this.token = options.token;
+  this.isSafeModel = options.isSafeModel || false;
+  this.encodingAESKey = options.encodingAESKey;
+  this.accessToken = null;
+  this.expiresIn = null;
+  this.jsApiTicket = null;
+  this.jsApiTicketExpiresIn = null;
+  this.initValidate();
+  this.wxcpt = new WXBizMsgCrypt({
+    sToken: this.token,
+    sCorpID: this.appID,
+    sEncodingAESKey:this.encodingAESKey
+  });
 }
 
+
+WeChat.prototype.initValidate = function () {
+  if (this.isSafeModel && !this.encodingAESKey) throw new Error("在安全模式下必须提供【encodingAESKey】参数！");
+}
 
 /**
  * 功能：验证消息的确来自微信服务器
  */
-WeChat.prototype.isMessageFromWeChat = async function (handler,next) {
+WeChat.prototype.isMessageFromWeChat = async function (handler, next) {
   var ctx = this;
-  var wechat=ctx.wechat;
-  var {signature, timestamp, nonce, echostr} = ctx.query;
+  var wechat = ctx.wechat;
+  var {signature, timestamp, nonce, echostr,encrypt_type,msg_signature} = ctx.query;
+  wechat.validateWechatRequest(encrypt_type,msg_signature);
   var token = wechat.token;
   var encryption = sha1([token, timestamp, nonce].sort().join(""));
   if (encryption === signature) {
-    if (ctx.method == "GET") {
-      ctx.body = echostr;
-    }
+    //接入微信
     if (ctx.method == "GET") {
       ctx.body = echostr;
     }
@@ -41,20 +54,47 @@ WeChat.prototype.isMessageFromWeChat = async function (handler,next) {
         limit: "1mb",
         encoding: "utf8"
       })
-      var xmlObject = await tool.parseXmlToObject(text);
-      var message = tool.formatMessage(xmlObject.xml);
+      var message;
+      //安全模式下，对消息进行加解密
+      if (wechat.isSafeModel == true) {
+        var result =await  wechat.decryptionMessage(msg_signature,timestamp,nonce,text);
+        message = tool.formatMessage(result.sMsg);
+      }
+      else{
+        var xmlObject = await tool.parseXmlToObject(text);
+        message = tool.formatMessage(xmlObject.xml);
+      }
       ctx.message = message;
       await handler.call(ctx, next);
-      wechat.reply.call(ctx);
+      wechat.reply.call(ctx,timestamp,nonce);
     }
-    else{
-        await next();
+    else {
+      await next();
     }
   }
   else {
     await next();
   }
 }
+
+
+WeChat.prototype.validateWechatRequest=function (encrypt_type,msg_signature) {
+  if(this.isSafeModel==true && !encrypt_type && !msg_signature){
+      throw new Error("当前正处于明文模式,config.isSafeModel应该配置为false");
+  }
+  if(!this.isSafeModel && encrypt_type && msg_signature){
+    throw new Error("当前正处于安全模式,config.isSafeModel应该配置为true");
+  }
+}
+
+/**
+ * 功能：在开启安全时候，需要对微信发送过来的消息进行解密
+ */
+WeChat.prototype.decryptionMessage = async function (signature,timestamp,nonce,text) {
+  var result=await this.wxcpt.DecryptMsg(signature,timestamp,nonce,text);
+  return result;
+}
+
 /**
  * 功能：获取access_Token
  */
@@ -74,12 +114,10 @@ WeChat.prototype.getAccessToken = async function () {
  */
 WeChat.prototype.getJsApiTicket = async function () {
   if (!this.isValidateJsApiTicket()) {
-    console.log("第一次");
     var token = await this.updateJsApiTicket();
     return token;
   }
   else {
-    console.log("其他");
     return this.jsApiTicket;
   }
 }
@@ -137,14 +175,17 @@ WeChat.prototype.updateJsApiTicket = async function () {
 }
 
 
-WeChat.prototype.reply = function () {
+WeChat.prototype.reply = function (timestamp,nonce) {
   var ctx = this;
   //回复的内容
   var content = ctx.reply;
   //接收微信消息（有普通消息和事件消息两种类型）
   var message = ctx.message;
-  var xml = reply.getReplyMeaageTemplate(content, message);
-  console.log(xml);
+  var xml=reply.getReplyMeaageTemplate(content, message);
+  if(this.wechat.isSafeModel==true){
+    xml=this.wechat.wxcpt.EncryptMsg(xml,timestamp,nonce).sEncryptMsg
+  }
+
   ctx.status = 200;
   ctx.type = "application/xml";
   ctx.body = xml;
@@ -181,21 +222,20 @@ WeChat.prototype.uploadTemporaryMaterial = async function (type, filePath) {
  * 功能：创建自定义菜单
  * @param [String] menuObject 菜单对象，对象的格式请参照微信开发文档，格式不对会抛出异常
  */
-WeChat.prototype.createMenu=async function(menuObject){
-	var accessToken = await this.getAccessToken();
-	var url=api.menu.createMenu+`access_token=${accessToken}`;
-	var options = {
+WeChat.prototype.createMenu = async function (menuObject) {
+  var accessToken = await this.getAccessToken();
+  var url = api.menu.createMenu + `access_token=${accessToken}`;
+  var options = {
     method: "POST",
     uri: url,
     body: menuObject,
-    json:true
+    json: true
   }
-	var response=await rp(options);
-	if(response.errcode!=0){
-		throw new Error(`errcode:${response.errcode},errmsg:${response.errmsg}`);
-	}
+  var response = await rp(options);
+  if (response.errcode != 0) {
+    throw new Error(`errcode:${response.errcode},errmsg:${response.errmsg}`);
+  }
 }
-
 
 
 /**
@@ -203,27 +243,27 @@ WeChat.prototype.createMenu=async function(menuObject){
  * @param [String] menuObject 菜单对象
  * 返回值：菜单的自定菜单的json数据
  */
-WeChat.prototype.getMenu=async function(){
-	var accessToken = await this.getAccessToken();
-	var url=api.menu.getMenu+`access_token=${accessToken}`;
+WeChat.prototype.getMenu = async function () {
+  var accessToken = await this.getAccessToken();
+  var url = api.menu.getMenu + `access_token=${accessToken}`;
 
-	var response=await rp(url);
-	return response;
+  var response = await rp(url);
+  return response;
 }
 
 
 /**
  * 功能：删除自定义菜单
  */
-WeChat.prototype.deleteMenu=async function(){
-	var accessToken = await this.getAccessToken();
-	var url=api.menu.deleteMenu+`access_token=${accessToken}`;
+WeChat.prototype.deleteMenu = async function () {
+  var accessToken = await this.getAccessToken();
+  var url = api.menu.deleteMenu + `access_token=${accessToken}`;
 
-	var response=await rp(url);
+  var response = await rp(url);
 
-	if(JSON.parse(response).errcode!=0){
-		throw new Error(`errcode:${response.errcode},errmsg:${response.errmsg}`);
-	}
+  if (JSON.parse(response).errcode != 0) {
+    throw new Error(`errcode:${response.errcode},errmsg:${response.errmsg}`);
+  }
 }
 
 

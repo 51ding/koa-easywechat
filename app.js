@@ -8,17 +8,17 @@ const logger = require('koa-logger')
 const wechat = require("./wechat");
 const weixin = require("./weixin");
 
-
 onerror(app)
 app.use(logger())
 app.use(wechat({
-  appID: "wx2ea795e409b2c674",
-  appsecret: "e4632492abb3de0943fc7ca20c4b27d0",
-  token: "houhanbin"
+  appID: "",
+  appsecret: "",
+  token: "",
+  isSafeModel:true,
+  encodingAESKey:""
 }, async function () {
   var message = this.message;
   var wechat = this.wechat;
-  console.log(message);
   if (message.MsgType == "text") {
     if (message.Content == 1) {
       this.reply = {
@@ -126,6 +126,13 @@ app.use(wechat({
     //删除菜单
     else if (message.Content == 9) {
       var menu = await wechat.deleteMenu();
+      this.reply = {
+        type: "text",
+        content: "删除成功！"
+      }
+    }
+    //回复加密的内容
+    else if(message.Content == 10){
       this.reply = {
         type: "text",
         content: "删除成功！"
