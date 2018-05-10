@@ -79,7 +79,7 @@ async replyHandler(next){
 
 #### wechat.getAccessToken
 
-​	获取accessToken。因为调用accessToken的接口每天的调用频率是有上限的，不能频繁调用，所以这里实现了accessToken的自管理，开发者不必关心accessToken是否过期，过期之后会自动去微信服务器请求并更新最新的accessToken。
+​	功能：获取accessToken。因为调用accessToken的接口每天的调用频率是有上限的，不能频繁调用，所以这里实现了accessToken的自管理，开发者不必关心accessToken是否过期，过期之后会自动去微信服务器请求并更新最新的accessToken。
 
 ```javascript
 var wechat=ctx.wechat;
@@ -88,7 +88,7 @@ var token=await ctx.getAccessToken();
 
 #### wechat.getJsApiTicket()
 
-​	jsapi_ticket是公众号用于调用微信JS接口的临时票据。jsapi_ticket与token类似，在微信网页开发中需要用到，也需要全局缓存。
+​	功能：获取jsapi_ticketj,sapi_ticket是公众号用于调用微信JS接口的临时票据。jsapi_ticket与token类似，在微信网页开发中需要用到，也需要全局缓存。
 
 ```javascript
 var wechat=ctx.wechat;
@@ -98,6 +98,8 @@ var jsApiTicket=await ctx.getJsApiTicket();
 
 
 #### wechat.uploadTemporaryMaterial(type,filePath)
+
+功能：上传临时素材
 
 参数
 
@@ -119,7 +121,76 @@ var wechat=ctx.wechat;
 var media=await ctx.uploadTemporaryMaterial("image","文件的路径");
 ```
 
+#### wechat.createMenu(menuObj)
 
+功能：创建自定义菜单
+
+参数：
+
+|   属性    |   类型   |       说明        |
+| :-----: | :----: | :-------------: |
+| menuObj | Object | 菜单对象，格式要符合规定的格式 |
+
+```javascript
+ var menu = {
+        button: [
+          {
+            type: "click",
+            name: "今日歌曲",
+            key: "V1001_TODAY_MUSIC"
+          },
+          {
+            name: "菜单",
+            sub_button: [
+              {
+                type: "view",
+                name: "搜索",
+                url: "http://www.soso.com/"
+              },
+              {
+                type: "click",
+                name: "赞一下我们",
+                key: "V1001_GOOD"
+              }]
+          }]
+      };
+var wechat=ctx.wechat;
+await wechat.createMenu(menu);
+```
+
+
+
+#### wechat.getMenu()
+
+功能：获取json格式的自定义菜单
+
+```javascript
+var wechat=ctx.wechat;
+var menu=await wechat.getMenu();
+```
+
+#### wechat.deleteMenu()
+
+```javascript
+var wechat=ctx.wechat;
+var menu=await wechat.deleteMenu();
+```
+
+
+
+功能：删除自定义菜单
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 先到这里。。。。。。
 
