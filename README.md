@@ -1,8 +1,10 @@
 ## koa-easywechat
 
-> koa-easywechat是一个微信公众号开发中间件.
+> koa-easywechat是一个微信公众号开发中间件,目前实现的功能有
 >
 > 由于使用的是koa2,异步开发使用async/await的写法，所以请保证你的node版本>=7.6
+>
+> 点击查看[更新日志](https://github.com/51ding/koa-easywechat/wiki/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
 
 ### 安装
 
@@ -50,7 +52,7 @@ app.listen(3000,()=>{
 - isSafeModel【Boolean】: 消息加解密方式,值为true时，使用安全模式，值为false时，使用明文模式，当不配置的时候，默认值为false
 - encodingAESKey【string】:消息加解密密钥，当config.isSafeModel=true时，必须配置encodingAESKey
 
-##### replyHandler:是一个async函数,用于开发者自己实现自己的自动回复业务逻辑
+##### replyHandler:是一个async函数,用于开发者自己实现自动回复业务逻辑
 
 ```javascript
 async replyHandler(next){
@@ -185,10 +187,7 @@ var menu=await wechat.deleteMenu();
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-先到这里。。。。。。
-
-未来还会实现更多的功能
+完结，撒花~~~~~~~~~~~~~~~
 
 
 
