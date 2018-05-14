@@ -7,15 +7,15 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const wechat = require("./wechat");
 const weixin = require("./weixin");
-
+var path=require("path");
+var fs=require("fs");
 onerror(app)
 app.use(logger())
 app.use(wechat({
-  appID: "",
-  appsecret: "",
-  token: "",
-  isSafeModel:false,
-  encodingAESKey:""
+  appID: "wx914e18b87ddbc384",
+  appsecret: "45d3ef8915d29189fd249a3a00ec2f3a",
+  token: "houhanbin",
+  isSafeModel:false
 }, async function () {
   var message = this.message;
   var wechat = this.wechat;
@@ -27,12 +27,12 @@ app.use(wechat({
       }
     }
     else if (message.Content == 2) {
-      this.reply = {
-        type: "image",
-        content: {
-          mediaid: "mB7xGVnSxP7gYUFrO4AWiBwJ75xarfktZihxjAnejafc9thcioKtNuDtm5lnrCqa"
-        }
-      }
+       var data=await wechat.uploadTemporaryMaterial("image",fs.createReadStream(path.join(__dirname,"./1.jpg")));
+       this.reply={
+         type:"text",
+         content:data.media_id
+       }
+
     }
     else if (message.Content == 3) {
       this.reply = {

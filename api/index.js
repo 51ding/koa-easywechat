@@ -23,9 +23,9 @@ module.exports={
 
   },
   menu:{
-  	createMenu:prefix+"menu/create?",
-  	getMenu:prefix+"menu/get?",
-  	deleteMenu:prefix+"menu/delete?"
+    createMenu:prefix+"menu/create?",
+    getMenu:prefix+"menu/get?",
+    deleteMenu:prefix+"menu/delete?"
   }
 
 }
