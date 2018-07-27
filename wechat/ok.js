@@ -3,13 +3,14 @@ var is = require("is");
 function Wechat(opts) {
     opts = opts || {};
     validateOpts(opts);
+
 }
 
 
 function validateOpts(opts) {
     var {mode,encodingAESKey} = opts;
     ["appID", "appsecret", "token", "mode"].forEach(item => {
-        if (!opts[item]) throw new Error(`无效的【${item}】参数!`);
+        if (!opts[item] || !is.string(opts[item])) throw new Error(`无效的【${item}】参数!`);
     })
     checkMode(mode);
     if ((mode == "compatible" || mode == "safe") && !encodingAESKey)

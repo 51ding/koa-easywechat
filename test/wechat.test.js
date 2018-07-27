@@ -5,7 +5,7 @@ describe("微信构造函数相关测试", function () {
     describe("初始化", function () {
         it("参数不齐抛出异常", function () {
             var opts = {
-                appID: "wx914e18b87ddbc384",
+                appID: {value:"wx914e18b87ddbc384"},
                 appsecret: "45d3ef8915d29189fd249a3a00ec2f3a",
                 token: "houhanbin",
                 mode:"safe"
