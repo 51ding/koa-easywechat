@@ -1,10 +1,12 @@
 {
   "name": "koa-easywechat",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
-    "test": "node ./test/MsgCrypt"
+    "test": "./node_modules/.bin/mocha"
   },
   "dependencies": {
+    "delegate": "^3.2.0",
+    "is": "^3.2.1",
     "lodash": "^4.17.10",
     "raw-body": "^2.3.2",
     "request": "^2.85.0",
@@ -12,7 +14,10 @@
     "sha1": "^1.1.1",
     "xml2js": "^0.4.19"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  },
   "description": "使用koa开发微信公众号",
   "main": "./wechat",
   "repository": {
