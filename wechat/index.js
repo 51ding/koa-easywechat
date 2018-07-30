@@ -21,11 +21,9 @@ function WeChat(opts) {
 WeChat.prototype.getAccessToken = async function () {
     if (!this.isValidateAccessToken()) {
         var token = await this.updateAccessToken();
-        console.log("新的");
         return token;
     }
     else {
-        console.log("旧的");
         return this.accessToken;
     }
 }

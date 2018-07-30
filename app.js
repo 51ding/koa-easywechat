@@ -20,9 +20,19 @@ app.use(wechat({
 }, async function () {
     var wechat=this.wechat;
     var token=await wechat.getAccessToken();
-    this.reply = {
-        type: "text",
-        content:token
+    var message=this.message.Content;
+    if(message == "1"){
+        this.reply = {
+            type: "text",
+            content:token
+        }
+    }
+    else if(message == "2"){
+        wechat.expiresIn=Date.now() - 100000;
+        this.reply = {
+            type: "text",
+            content:"更新成功"
+        }
     }
 }))
 //  function () {

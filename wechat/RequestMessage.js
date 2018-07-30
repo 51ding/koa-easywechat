@@ -35,7 +35,12 @@ var safeMode = {
             sCorpID:appID,
             sEncodingAESKey:encodingAESKey
         });
-        var message = await wxcpt.DecryptMsg(msg_signature, timestamp, nonce, text);
+        try{
+            var message = await wxcpt.DecryptMsg(msg_signature, timestamp, nonce, text);
+        }
+        catch(err){
+            throw new Error("解密错误，请检查encodingAESKey是否正确！");
+        }
         message = util.formatMessage(message.sMsg);
         return message;
     }

@@ -19,7 +19,7 @@
     "mocha": "^5.2.0"
   },
   "description": "使用koa开发微信公众号",
-  "main": "./wechat",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:51ding/koa-easywechat.git"

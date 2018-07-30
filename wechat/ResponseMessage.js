@@ -16,7 +16,12 @@ function RespnseMessage() {
             sCorpID: appID,
             sEncodingAESKey: encodingAESKey
         });
-        xml = wxcpt.EncryptMsg(xml, timestamp, nonce).sEncryptMsg;
+        try{
+            xml = wxcpt.EncryptMsg(xml, timestamp, nonce).sEncryptMsg;
+        }
+        catch(err){
+            throw new Error("加密错误，请检查encodingAESKey是否正确！");
+        }
     }
     ctx.status = 200;
     ctx.type = "application/xml";
