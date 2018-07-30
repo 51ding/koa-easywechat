@@ -1,6 +1,6 @@
 ## koa-easywechat
 
-> koa-easywechat是一个微信公众号开发中间件,目前实现的功能有
+> koa-easywechat是一个基于koa2的微信公众号开发中间件
 >
 > 由于使用的是koa2,异步开发使用async/await的写法，所以请保证你的node版本>=7.6
 >

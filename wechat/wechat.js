@@ -6,7 +6,7 @@ var sha1 = require("sha1");
 var util = require("util");
 var getRawBody = require("raw-body");
 var tool = require("../lib/tool");
-//var WXBizMsgCrypt = require("../lib/WXBizMsgCrypt.js");
+var WXBizMsgCrypt = require("../lib/WXBizMsgCrypt.js");
 var lib=require("../lib");
 var {copyProperty}=require("../tool/obj");
 
@@ -101,14 +101,14 @@ WeChat.prototype.validateWechatRequest = function (encrypt_type, msg_signature) 
     throw new Error("当前正处于安全模式,config.isSafeModel应该配置为true");
   }
 }
-//
-// /**
-//  * 功能：在开启安全时候，需要对微信发送过来的消息进行解密
-//  */
-// WeChat.prototype.decryptionMessage = async function (signature, timestamp, nonce, text) {
-//   var result = await this.wxcpt.DecryptMsg(signature, timestamp, nonce, text);
-//   return result;
-// }
+
+/**
+ * 功能：在开启安全时候，需要对微信发送过来的消息进行解密
+ */
+WeChat.prototype.decryptionMessage = async function (signature, timestamp, nonce, text) {
+  var result = await this.wxcpt.DecryptMsg(signature, timestamp, nonce, text);
+  return result;
+}
 //
 // /**
 //  * 功能：获取access_Token

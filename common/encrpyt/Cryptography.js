@@ -2,7 +2,7 @@
  * AES加密解密
  */
 var crypto = require('crypto');
-var util = require("../tool");
+var util = require("../util");
 
 function Cryptography() {
 

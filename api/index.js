@@ -26,6 +26,10 @@ module.exports={
     createMenu:prefix+"menu/create?",
     getMenu:prefix+"menu/get?",
     deleteMenu:prefix+"menu/delete?"
+  },
+  ai:{
+    semantic:"https://api.weixin.qq.com/semantic/semproxy/search?",
+    translate:prefix+"media/voice/translatecontent?"
   }
 
 }
