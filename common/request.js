@@ -51,7 +51,6 @@ async function responseHandled(option) {
     catch (err) {
         throw err;
     }
-    console.log("response.errcode",response.errcode);
     if (response.errcode && response.errcode != 0)
         throw new WeChatError(response.errcode);
     return response;

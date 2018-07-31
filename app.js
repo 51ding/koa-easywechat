@@ -12,10 +12,10 @@ var fs = require("fs");
 onerror(app)
 app.use(logger())
 app.use(wechat({
-    appID: "wx914e18b87ddbc384",
-    appsecret: "45d3ef8915d29189fd249a3a00ec2f3a",
+    appID: "wx2ea795e409b2c674",
+    appsecret: "e4632492abb3de0943fc7ca20c4b27d0",
     token: "houhanbin",
-    mode: "safe",
+    mode: "clear",
     encodingAESKey:"jo2MhVyQIe2E19rBBwdBMJPI3SsQwXmY82iW2ToOmuG"
 }, async function () {
     var wechat=this.wechat;
