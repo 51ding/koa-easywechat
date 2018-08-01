@@ -25,7 +25,7 @@ async function get(url, headers) {
 * @param body [Object] post请求体携带的数据
 * @param  headers [Object] 额外的请求头，可空
 */
-async function post(url,isformData,body, headers) {
+async function post(url,body,isformData,headers) {
     var option = {};
     option.uri = url;
     option.method = "POST";

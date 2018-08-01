@@ -1,6 +1,6 @@
 var is = require("is");
 var HttpRequest=require("../common/request");
-var api=require("../api");
+var {api,wechatApi}=require("../api");
 
 function WeChat(opts) {
     opts = opts || {};
@@ -76,5 +76,10 @@ function checkMode(mode) {
     if (!enableMode.includes(mode))
         throw new Error(`无效的消息加解密方式,有效值为["clear","compatible","safe"],当前值为${mode}`);
 }
+
+/*
+* 功能:给WeChat.prototype挂载一些方法
+*/
+Object.assign(WeChat.prototype,wechatApi());
 
 module.exports = WeChat;
