@@ -5,9 +5,9 @@
     "test": "./node_modules/.bin/mocha"
   },
   "dependencies": {
-    "delegate": "^3.2.0",
     "glob": "^7.1.2",
     "is": "^3.2.1",
+    "koa-json": "^2.0.2",
     "raw-body": "^2.3.2",
     "request": "^2.85.0",
     "request-promise": "^4.2.2",

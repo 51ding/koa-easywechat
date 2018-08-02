@@ -1,4 +1,4 @@
-var is = require("is");
+var is=require("is");
 var HttpRequest=require("../common/request");
 var {api,wechatApi}=require("../api");
 
