@@ -78,7 +78,7 @@ function checkMode(mode) {
 }
 
 /*
-* 功能:给WeChat.prototype挂载一些方法
+* 功能:给WeChat.prototype上挂载微信的方法
 */
 Object.assign(WeChat.prototype,wechatApi());
 
