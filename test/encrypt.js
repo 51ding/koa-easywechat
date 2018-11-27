@@ -27,6 +27,7 @@ describe("微信消息加解密",function () {
     it("微信消息加密",function () {
         var sRespData = "<xml><ToUserName><![CDATA[mycreate]]></ToUserName><FromUserName><![CDATA[wx582测试一下中文的情况，消息长度是按字节来算的396d3bd56c7]]></FromUserName><CreateTime>1348831860</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[this is a test]]></Content><MsgId>1234567890123456</MsgId></xml>";
         var sEncryptMsg = ""; //xml格式的密文
+        
         var sToken = "QDG6eK";
         var  sAppID = "wx5823bf96d3bd56c7";
         var sEncodingAESKey = "jWmYm7qr5nMoAUwZRjGtBxmz3KA1tkAj3ykkR6q2B2C";
