@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "koa": "^2.6.2"
+  },
+  "dependencies": {
+    "koa": "^2.6.2"
+  }
+}

@@ -1,6 +1,6 @@
 var Koa=require("koa");
 
-var WeChat =require("../lib");
+var WeChat =require("../lib/index");
 
 var app=new Koa();
 
@@ -11,7 +11,7 @@ var options= {
 	issafe:false
 };
 
-app.use(WeChat(options))
+//app.use(WeChat(options))
 
 
 app.listen(3000,()=>{
